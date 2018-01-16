@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 import flask
 import json
 from textwrap import dedent
@@ -15,12 +15,41 @@ blockchain = Blockchain()
 
 @app.route('/mine', methods=['GET'])
 def mine():
-    return "We'll mine a new Block", 200
+    last_block = blockchain.last_block
+    last_proof = last_block['proof']
+
+    proof = blockchain.proof_of_work(last_proof)
+
+    blockchain.new_transactions(
+        sender='0',
+        recipient=node_identifier,
+        amount=1
+    )
+
+    previous_hash = blockchain.hash(last_block)
+    block = blockchain.new_block(proof, previous_hash)
+
+    response = {
+        'message': 'new block forged',
+        'index': block['index'],
+        'transactions': block['transactions'],
+        'proof': block['proof'],
+        'previous_hash': block['previous_hash']
+    }
+    return jsonify(response), 200
 
 
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
-    return "We'll add a new transaction", 200
+    values = request.get_json()
+    print(values)
+
+
+    index = blockchain.new_transactions(values['sender'], values['recipient'], values['amount'])
+
+    response = {'message': 'Transaction will be added to Block {0}'.format(index)}
+
+    return jsonify(response), 201
 
 
 @app.route('/chain', methods=['GET'])
