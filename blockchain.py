@@ -61,3 +61,27 @@ class Blockchain(object):
 
         return self.chain[-1]
 
+    def proof_of_work(self, last_proof):
+        """
+        :param last_proof: last proof
+        :return: matched proof
+        """
+
+        proof = 0
+
+        while self.valid_proof(last_proof, proof) is False:
+            proof += 1
+
+        return proof
+
+    @staticmethod
+    def valid_proof(last_proof, proof):
+        """
+        :param last_proof:
+        :param proof:
+        :return:
+        """
+
+        guess = str(last_proof * proof).encode()
+        return hashlib.sha256(guess).hexdigest()[:4] == '0000' #set difficulty
+
