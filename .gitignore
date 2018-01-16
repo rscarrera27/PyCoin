@@ -100,3 +100,10 @@ ENV/
 
 #PyCharm
 ./idea
+.idea/workspace.xml
+.idea/vcs.xml
+.idea/Python-BlockChain.iml
+.idea/preferred-vcs.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/inspectionProfiles/profiles_settings.xml
