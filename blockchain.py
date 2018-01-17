@@ -1,14 +1,45 @@
 import hashlib
 import json
+import requests
 from time import time
+from urllib.parse import urlparse
 
 class Blockchain(object):
 
     def __init__(self):
         self.chain = []
+        self.nodes = set()
         self.current_transactions = []
 
         self.new_block(previous_hash=1, proof=100) #Make Genesis block
+
+    def register_node(self, address):
+        parsed_url = urlparse(address)
+        self.nodes.add(parsed_url.netloc)
+
+    def resolve_conflict(self):
+
+        neigbours = self.nodes
+        new_chain = None
+
+        max_length = len(self.chain)
+
+        for node in neigbours:
+            response = requests.get('https://{0}/chain'.format(node))
+
+            if response.status_code == 200:
+                length = response.json()['length']
+                chain = response.json()['chain']
+
+                if length > max_length and self.valid_chain(chain):
+                    max_length = length
+                    new_chain = chain
+
+        if new_chain:
+            self.chain = new_chain
+            return True
+
+        return False
 
     def new_block(self, proof, previous_hash=None):
 
@@ -85,4 +116,23 @@ class Blockchain(object):
 
         guess = str(last_proof * proof).encode()
         return hashlib.sha256(guess).hexdigest()[:4] == '0000' #set difficulty
+
+    def valid_chain(self, chain):
+
+        last_block = chain[0]
+        for current_index in chain:
+            block = chain[current_index]
+
+            print('last block : {0}\nblock : {1}\n--------------------\n'.format(last_block, block))
+
+            if block['previous_hash'] != self.hash(last_block):
+                return False
+
+            if not self.valid_proof(last_block['proof'], block['proof']):
+                return False
+
+            last_block = block
+            current_index += 1
+
+        return True
 
