@@ -61,6 +61,27 @@ def full_chain():
 
     return flask.jsonify(response), 200
 
+@app.route('/nodes/register', methods=['POST'])
+def register_nodes():
+
+    values = request.get_json()
+
+    nodes = values.get('nodes')
+
+    if nodes is None:
+        return "Error : unvalid list of nodes", 400
+
+    for node in nodes:
+        blockchain.register_node(node)
+
+    response = {
+        'message': 'New Nodes hav been successfully added',
+        'total_nodes': list(blockchain.nodes)
+    }
+
+    return jsonify(response), 201
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000, debug=True)
