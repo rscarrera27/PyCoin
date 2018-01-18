@@ -6,7 +6,7 @@ class Transactions(EmbeddedDocument):
     sender = StringField(
         required=True
     )
-    recipent = StringField(
+    recipient = StringField(
         required=True
     )
     amount = LongField(
