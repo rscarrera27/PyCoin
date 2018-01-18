@@ -1,7 +1,5 @@
 from flask import Flask, jsonify, request
 import flask
-import json
-from textwrap import dedent
 from uuid import uuid4
 
 from blockchain import Blockchain
@@ -44,7 +42,6 @@ def new_transaction():
     values = request.get_json()
     print(values)
 
-
     index = blockchain.new_transactions(values['sender'], values['recipient'], values['amount'])
 
     response = {'message': 'Transaction will be added to Block {0}'.format(index)}
@@ -60,6 +57,7 @@ def full_chain():
     }
 
     return flask.jsonify(response), 200
+
 
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
@@ -81,6 +79,7 @@ def register_nodes():
 
     return jsonify(response), 201
 
+
 @app.route('/nodes/resolve', methods=['GET'])
 def consensus():
     replaced = blockchain.resolve_conflict()
@@ -97,7 +96,6 @@ def consensus():
         }
 
     return response, 200
-
 
 
 if __name__ == '__main__':

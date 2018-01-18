@@ -4,6 +4,7 @@ import requests
 from time import time
 from urllib.parse import urlparse
 
+
 class Blockchain(object):
 
     def __init__(self):
@@ -11,7 +12,7 @@ class Blockchain(object):
         self.nodes = set()
         self.current_transactions = []
 
-        self.new_block(previous_hash=1, proof=100) #Make Genesis block
+        self.new_block(previous_hash=1, proof=100)  # Make Genesis block
 
     def register_node(self, address):
         parsed_url = urlparse(address)
@@ -115,7 +116,7 @@ class Blockchain(object):
         """
 
         guess = str(last_proof * proof).encode()
-        return hashlib.sha256(guess).hexdigest()[:4] == '0000' #set difficulty
+        return hashlib.sha256(guess).hexdigest()[:4] == '0000'  # set difficulty
 
     def valid_chain(self, chain):
 
@@ -135,4 +136,3 @@ class Blockchain(object):
             current_index += 1
 
         return True
-
