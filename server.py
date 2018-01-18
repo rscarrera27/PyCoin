@@ -56,7 +56,7 @@ def full_chain():
         'length': len(blockchain.chain),
     }
 
-    return flask.jsonify(response), 200
+    return jsonify(response), 200
 
 
 @app.route('/nodes/register', methods=['POST'])
@@ -92,10 +92,10 @@ def consensus():
     else:
         response = {
             'message': "There's no conflict in chain. nothing has changed",
-            'new_chain': blockchain.chain
+            'chain': blockchain.chain
         }
 
-    return response, 200
+    return jsonify(response), 200
 
 
 if __name__ == '__main__':
