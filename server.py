@@ -70,7 +70,7 @@ def register_nodes():
         return "Error : unvalid list of nodes", 400
 
     for node in nodes:
-        blockchain.register_node(nodes)
+        blockchain.register_node(node)
 
     response = {
         'message': 'New Nodes hav been successfully added',
