@@ -66,7 +66,7 @@ def register_nodes():
     nodes = values.get('nodes')
     print(nodes)
 
-    if nodes is None:
+    if nodes is None or type(nodes) == str:
         return "Error : unvalid list of nodes", 400
 
     for node in nodes:
