@@ -63,11 +63,11 @@ class Blockchain(object):
 
         self.chain.append(block)
         Block(
-            index=(len(self.chain) + 1),
+            index=len(self.chain),
             transactions=self.current_transactions,
             proof=proof,
-            previous_hash=(previous_hash or self.hash(self.chain[-1]))
-        )
+            previous_hash=str(previous_hash or self.hash(self.chain[-1]))
+        ).save()
 
         self.current_transactions = []
 
