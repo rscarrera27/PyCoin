@@ -15,9 +15,6 @@ class Block(Document):
     )
 
     transactions = ListField(
-        EmbeddedDocumentField(
-            document_type=Transactions
-        )
     )
 
     proof = LongField(
