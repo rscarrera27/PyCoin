@@ -3,7 +3,8 @@ import json
 import requests
 from time import time
 from urllib.parse import urlparse
-
+from mongoengine import *
+from models import *
 
 class Blockchain(object):
 
@@ -17,6 +18,8 @@ class Blockchain(object):
     def register_node(self, address):
         parsed_url = urlparse(address)
         self.nodes.add(parsed_url.netloc)
+        Node(node_url=parsed_url.netloc)
+        print(parsed_url)
 
     def resolve_conflict(self):
 
@@ -58,8 +61,15 @@ class Blockchain(object):
             'previous_hash': previous_hash or self.hash(self.chain[-1])
         }
 
-        self.current_transactions = []
         self.chain.append(block)
+        Block(
+            index=(len(self.chain) + 1),
+            transactions=self.current_transactions,
+            proof=proof,
+            previous_hash=(previous_hash or self.hash(self.chain[-1]))
+        )
+
+        self.current_transactions = []
 
         return block
 
