@@ -18,7 +18,7 @@ class Blockchain(object):
     def register_node(self, address):
         parsed_url = urlparse(address)
         self.nodes.add(parsed_url.netloc)
-        Node(node_url=parsed_url.netloc)
+        Node(node_url=parsed_url.netloc).save()
         print(parsed_url)
 
     def resolve_conflict(self):
