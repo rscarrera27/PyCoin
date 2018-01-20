@@ -3,6 +3,7 @@ import json
 import requests
 from time import time
 from urllib.parse import urlparse
+from models import *
 
 
 class Blockchain(object):
@@ -16,7 +17,7 @@ class Blockchain(object):
 
     def register_node(self, address):
         parsed_url = urlparse(address)
-        self.nodes.add(parsed_url.netloc)
+        self.nodes.add(parsed_url.netloc)  # TODO: Update DB for append new node
 
     def resolve_conflict(self):
 
@@ -37,7 +38,7 @@ class Blockchain(object):
                     new_chain = chain
 
         if new_chain:
-            self.chain = new_chain
+            self.chain = new_chain  # TODO: Update DB for chain replacement
             return True
 
         return False
@@ -58,8 +59,8 @@ class Blockchain(object):
             'previous_hash': previous_hash or self.hash(self.chain[-1])
         }
 
-        self.current_transactions = []
-        self.chain.append(block)
+        self.current_transactions = []  # TODO: Clean Transactions collection
+        self.chain.append(block)  # TODO: Update DB for append blocks
 
         return block
 
@@ -78,7 +79,7 @@ class Blockchain(object):
             'sender': sender,
             'recipient': recipient,
             'amount': amount
-        })
+        })  # TODO: Update DB for append transactions
 
         return self.last_block['index'] + 1
 
