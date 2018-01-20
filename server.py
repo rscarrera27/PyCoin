@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, request
-import flask
 from uuid import uuid4
 
 from blockchain import Blockchain
@@ -65,8 +64,9 @@ def register_nodes():
     values = request.get_json()
 
     nodes = values.get('nodes')
+    print(nodes)
 
-    if nodes is None:
+    if nodes is None or type(nodes) == str:
         return "Error : unvalid list of nodes", 400
 
     for node in nodes:
@@ -99,4 +99,4 @@ def consensus():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3000, debug=True)
+    app.run(host='0.0.0.0', port=3001, debug=True)
