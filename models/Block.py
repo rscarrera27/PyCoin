@@ -3,6 +3,8 @@ from mongoengine import *
 import datetime
 
 
+connect('BlockChain')
+
 class Block(Document):
 
     index = LongField(
