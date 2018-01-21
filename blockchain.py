@@ -9,15 +9,36 @@ from models import *
 class Blockchain(object):
 
     def __init__(self):
-        self.chain = []
-        self.nodes = set()
-        self.current_transactions = []
+        if len(Block.objects) == 0:
+            self.chain = []
+            self.new_block(previous_hash=1, proof=100)
 
-        self.new_block(previous_hash=1, proof=100)  # Make Genesis block
+        else:
+            self.chain = []
+            for block in Block.objects:
+                self.chain.append({
+                    'index': block.index,
+                    'timestamp': block.timestamp,
+                    'transactions': block.transactions,
+                    'proof': block.proof,
+                    'previous_hash': block.previous_hash
+                })
+
+        if len(Node.objects) == 0:
+            self.nodes = []
+
+        else:
+            self.nodes = []
+            for node in Node.objects:
+                self.nodes.append({
+                    "node_url": node.node_url
+                })
+
+        self.current_transactions = []
 
     def register_node(self, address):
         parsed_url = urlparse(address)
-        self.nodes.add(parsed_url.netloc)
+        self.nodes.append(parsed_url.netloc)
         Node(node_url=parsed_url.netloc).save()
         print(parsed_url)
 
