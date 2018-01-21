@@ -1,19 +1,26 @@
 import hashlib
 import json
 import requests
+import datetime
 from time import time
 from urllib.parse import urlparse
 from models import *
-
+datetime = datetime.datetime
 
 class Blockchain(object):
 
     def __init__(self):
+        self.current_transactions = []
+
         if len(Block.objects) == 0:
+            print("Chain initialized on {0}".format(datetime.now()))
+
             self.chain = []
             self.new_block(previous_hash=1, proof=100)
 
         else:
+            print("Chain loaded from database on {0}".format(datetime.now()))
+
             self.chain = []
             for block in Block.objects:
                 self.chain.append({
@@ -25,16 +32,18 @@ class Blockchain(object):
                 })
 
         if len(Node.objects) == 0:
+            print("Node list initialized on {0}".format(datetime.now()))
+
             self.nodes = []
 
         else:
+            print("Node list loaded from database on {0}".format(datetime.now()))
+
             self.nodes = []
             for node in Node.objects:
                 self.nodes.append({
                     "node_url": node.node_url
                 })
-
-        self.current_transactions = []
 
     def register_node(self, address):
         parsed_url = urlparse(address)
@@ -73,6 +82,7 @@ class Blockchain(object):
         :param previous_hash: previous hash
         :return: created block
         """
+        print(self.current_transactions)
 
         block = {
             'index': len(self.chain) + 1,
