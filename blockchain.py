@@ -4,6 +4,7 @@ import requests
 from time import time
 from urllib.parse import urlparse
 from models import *
+from account import Account
 
 class Blockchain(object):
 
@@ -112,14 +113,20 @@ class Blockchain(object):
 
         method for make new transactions
         """
-
-        self.current_transactions.append({
+        requested_transactions = {
             'sender': sender,
             'recipient': recipient,
             'amount': amount
-        })  # TODO: Update DB for append transactions
+        }
 
-        return self.last_block['index'] + 1
+        if Account.valid_transactions(requested_transactions) is True:
+            self.current_transactions.append(requested_transactions)
+            Account.update_transactions_info(sender, recipient, requested_transactions)
+
+            return self.last_block['index'] + 1
+        
+        else:
+            return False
 
     @staticmethod
     def hash(block):
