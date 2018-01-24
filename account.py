@@ -4,7 +4,12 @@ from models.Account import *
 class Account:
 
     def __init__(self):
-        pass
+        check = self.apply_acount("0")
+        if check is True:
+            print("Genesis account spawned")
+            Accounts.objects(account_id="0").update_one(set__amount=210000000)
+        else:
+            pass
 
     @staticmethod
     def valid_transactions(transations):

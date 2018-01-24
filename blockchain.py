@@ -6,6 +6,8 @@ from urllib.parse import urlparse
 from models import *
 from account import Account
 
+Account = Account()
+
 class Blockchain(object):
 
     def __init__(self):
