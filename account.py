@@ -22,7 +22,14 @@ class Account:
             return True
 
     @staticmethod
-    def update_transactions_info(sender_id, recipient_id,  transactions_list):
+    def update_transactions_info(sender_id, recipient_id, transaction):
 
-        Account.objects(id=sender_id).update_one(transactions=transactions_list)
-        Account.objects(id=recipient_id).update_one(transactions=transactions_list)
+        Account.objects(id=sender_id).update_one(push__transactions=transaction)
+        Account.objects(id=recipient_id).update_one(push__transactions=transaction)
+
+    @staticmethod
+    def apply_acount(id):
+
+        Account(
+            id=id
+        ).save()
