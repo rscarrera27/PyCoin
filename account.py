@@ -10,6 +10,7 @@ class Account:
     def valid_transactions(transations):
 
         sender = transations['sender']
+        recipient = transations['recipient']
         requested_amount = transations['amount']
         queried_amount = Accounts.objects(account_id=sender)[0]
         queried_amount = queried_amount.amount
@@ -20,15 +21,14 @@ class Account:
             return False
         else:
             Accounts.objects(account_id=sender).update_one(set__amount=balance)
+            Accounts.objects(account_id=recipient).update_one(inc__amount=requested_amount)
             return True
 
     @staticmethod
     def check_id(sender_id, recipient_id):
+
         check_sender_id = not (len(Accounts.objects(account_id=sender_id)) is 0)
         check_recipient_id = not (len(Accounts.objects(account_id=recipient_id)) is 0)
-
-        print("account" + str(check_recipient_id and check_sender_id))
-        print(Accounts.objects(account_id=sender_id))
 
         if not (check_recipient_id and check_sender_id):
             return False
