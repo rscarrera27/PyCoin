@@ -1,11 +1,9 @@
 import hashlib
 import json
 import requests
-import datetime
 from time import time
 from urllib.parse import urlparse
 from models import *
-datetime = datetime.datetime
 
 class Blockchain(object):
 
@@ -13,31 +11,31 @@ class Blockchain(object):
         self.current_transactions = []
 
         if len(Block.objects) == 0:
-            print("Chain initialized on {0}".format(datetime.now()))
+            print("Chain initialized on {0}".format(datetime.datetime.now()))
 
             self.chain = []
             self.new_block(previous_hash=1, proof=100)
 
         else:
-            print("Chain loaded from database on {0}".format(datetime.now()))
+            print("Chain loaded from database on {0}".format(datetime.datetime.now()))
 
             self.chain = []
             for block in Block.objects:
                 self.chain.append({
                     'index': block.index,
-                    'timestamp': block.timestamp,
+                    'timestamp': str(block.timestamp),
                     'transactions': block.transactions,
                     'proof': block.proof,
                     'previous_hash': block.previous_hash
                 })
 
         if len(Node.objects) == 0:
-            print("Node list initialized on {0}".format(datetime.now()))
+            print("Node list initialized on {0}".format(datetime.datetime.now()))
 
             self.nodes = []
 
         else:
-            print("Node list loaded from database on {0}".format(datetime.now()))
+            print("Node list loaded from database on {0}".format(datetime.datetime.now()))
 
             self.nodes = []
             for node in Node.objects:
@@ -86,7 +84,7 @@ class Blockchain(object):
 
         block = {
             'index': len(self.chain) + 1,
-            'timestamp': time(),
+            'timestamp': str(datetime.datetime.now()),
             'transactions': self.current_transactions,
             'proof': proof,
             'previous_hash': previous_hash or self.hash(self.chain[-1])
