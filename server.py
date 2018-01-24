@@ -41,7 +41,7 @@ def new_transaction():
     values = request.get_json()
     print(values)
 
-    index = blockchain.new_transactions(values['sender'], values['recipient'], values['amount'])
+    check, index = blockchain.new_transactions(values['sender'], values['recipient'], values['amount'])
 
     response = {'message': 'Transaction will be added to Block {0}'.format(index)}
 
