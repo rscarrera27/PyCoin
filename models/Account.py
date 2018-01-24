@@ -3,9 +3,10 @@ import datetime
 
 connect('BlockChain')
 
-class Account(Document):
 
-    id = StringField(
+class Accounts(Document):
+
+    account_id = StringField(
         required=True
     )
 
