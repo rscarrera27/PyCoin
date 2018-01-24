@@ -118,6 +118,10 @@ class Blockchain(object):
             'recipient': recipient,
             'amount': amount
         }
+        if Account.check_id(sender, recipient) is False:
+            return False, self.last_block['index'] + 1
+        else:
+            pass
 
         if Account.valid_transactions(requested_transactions) is True:
             self.current_transactions.append(requested_transactions)
