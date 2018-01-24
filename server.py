@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from uuid import uuid4
+from account import *
 
 from blockchain import Blockchain
 
@@ -14,6 +15,7 @@ blockchain = Blockchain()
 def mine():
     last_block = blockchain.last_block
     last_proof = last_block['proof']
+    node_identifier = request.args.get("node_identifier")
 
     proof = blockchain.proof_of_work(last_proof)
 
@@ -36,18 +38,6 @@ def mine():
     return jsonify(response), 200
 
 
-@app.route('/transactions/new', methods=['POST'])
-def new_transaction():
-    values = request.get_json()
-    print(values)
-
-    check, index = blockchain.new_transactions(values['sender'], values['recipient'], values['amount'])
-
-    response = {'message': 'Transaction will be added to Block {0}'.format(index)}
-
-    return jsonify(response), 201
-
-
 @app.route('/chain', methods=['GET'])
 def full_chain():
     response = {
@@ -56,6 +46,37 @@ def full_chain():
     }
 
     return jsonify(response), 200
+
+
+@app.route('/id/apply', methods=['POST'])
+def apply_acount():
+
+    values = request.get_json()
+
+    id = values.get('id')
+    print(id)
+
+    if Account.apply_acount(id):
+        response = jsonify({'message': 'ID was applied'}), 201
+    else:
+        response = jsonify({'message': 'requested ID is existing'}), 400
+
+    return response
+
+
+@app.route('/transactions/new', methods=['POST'])
+def new_transaction():
+    values = request.get_json()
+    print(values)
+
+    check, index = blockchain.new_transactions(values['sender'], values['recipient'], values['amount'])
+
+    if check:
+        response = jsonify({'message': 'Transaction will be added to Block {0}'.format(index)}), 201
+    else:
+        response = jsonify({'message': 'Requested transaction is rejected'}), 403
+
+    return response
 
 
 @app.route('/nodes/register', methods=['POST'])
