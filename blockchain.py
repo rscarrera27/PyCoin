@@ -123,10 +123,10 @@ class Blockchain(object):
             self.current_transactions.append(requested_transactions)
             Account.update_transactions_info(sender, recipient, requested_transactions)
 
-            return self.last_block['index'] + 1
-        
+            return True, self.last_block['index'] + 1
+
         else:
-            return False
+            return False, self.last_block['index'] + 1
 
     @staticmethod
     def hash(block):
