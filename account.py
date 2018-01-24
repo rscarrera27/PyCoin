@@ -22,6 +22,15 @@ class Account:
             return True
 
     @staticmethod
+    def check_id(sender_id, recipient_id):
+        check_sender_id = len(Account.objects(id=sender_id)) is 0
+        check_recipient_id = len(Account.objects(id=recipient_id)) is 0
+        if not (check_recipient_id and check_sender_id):
+            return False
+        else:
+            return True
+        
+    @staticmethod
     def update_transactions_info(sender_id, recipient_id, transaction):
 
         Account.objects(id=sender_id).update_one(push__transactions=transaction)
