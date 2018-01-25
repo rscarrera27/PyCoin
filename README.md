@@ -47,7 +47,7 @@ Implement blockchain with python.
 - DB application complete
 - account system implement successful
 
-##TODO
+## TODO
 - Sync feature implement
 - Travis Ci and pytest application 
 
