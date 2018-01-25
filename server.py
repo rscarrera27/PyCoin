@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from uuid import uuid4
-from account import *
+from PyCoin.account import *
 
 from PyCoin.blockchain import Blockchain
 from PyCoin.hash_cash import *
@@ -17,6 +17,10 @@ def mine():
     last_block = blockchain.last_block
     last_proof = last_block['proof']
     node_identifier = request.args.get("node_identifier")
+
+    if type(node_identifier) != str:
+        if Account.check_id("0", node_identifier) is False:
+            return jsonify({'message': "Wrong argument"}), 403
 
     proof = HashCash.proof_of_work(last_proof)
 
@@ -54,10 +58,10 @@ def apply_acount():
 
     values = request.get_json()
 
-    id = values.get('id')
-    print(id)
+    account_id = values.get('id')
+    print(account_id)
 
-    if Account.apply_acount(id):
+    if Account.apply_acount(account_id):
         response = jsonify({'message': 'ID was applied'}), 201
     else:
         response = jsonify({'message': 'requested ID is existing'}), 400
