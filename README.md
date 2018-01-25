@@ -14,12 +14,33 @@ Implement blockchain with python.
     - No Argument
 - description : get full chain  
 
-/id/apply
+/id/apply - POST
 - value
     - id(string) : new account id
 - description : apply new id
 
-/transactions/new
+/transactions/new - POST
+- value
+    - sender(string) : sender id
+    - recipient(string) : recipient id
+    - amount(int) : amount
+- description : making new transactions
+
+/transactions - GET
+- argument
+    - No Argument
+- description : get current transactions
+
+/nodes/register - POST
+- values
+    - nodes(list) : list of new nodes
+- description : add new node
+
+/nodes/resolve - GET
+- argument
+    - No Argument
+- description : resolve consensus
+
 
 
 ## Notes
