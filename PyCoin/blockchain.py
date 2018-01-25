@@ -1,12 +1,10 @@
+import requests
+import PyCoin.account
+from models import *
+from PyCoin.hash_cash import *
 from urllib.parse import urlparse
 
-import requests
-
-from PyCoin.account import Account
-from PyCoin.hash_cash import *
-from models import *
-
-Account = Account()
+Account = PyCoin.account.Account()
 
 
 class Blockchain(object):
