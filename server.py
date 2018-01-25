@@ -2,7 +2,8 @@ from flask import Flask, jsonify, request
 from uuid import uuid4
 from account import *
 
-from blockchain import Blockchain
+from PyCoin.blockchain import Blockchain
+from PyCoin.hash_cash import *
 
 app = Flask(__name__)
 
@@ -17,7 +18,7 @@ def mine():
     last_proof = last_block['proof']
     node_identifier = request.args.get("node_identifier")
 
-    proof = blockchain.proof_of_work(last_proof)
+    proof = HashCash.proof_of_work(last_proof)
 
     blockchain.new_transactions(
         sender='0',
@@ -25,7 +26,7 @@ def mine():
         amount=1
     )
 
-    previous_hash = blockchain.hash(last_block)
+    previous_hash = HashCash.hash(last_block)
     block = blockchain.new_block(proof, previous_hash)
 
     response = {

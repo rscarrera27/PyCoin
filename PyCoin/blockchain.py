@@ -1,12 +1,13 @@
-import hashlib
-import json
-import requests
-from time import time
 from urllib.parse import urlparse
+
+import requests
+
+from PyCoin.account import Account
+from PyCoin.hash_cash import *
 from models import *
-from account import Account
 
 Account = Account()
+
 
 class Blockchain(object):
 
@@ -71,7 +72,7 @@ class Blockchain(object):
                     new_chain = chain
 
         if new_chain:
-            self.chain = new_chain  # TODO: Update DB for chain replacement
+            self.chain = new_chain
             return True
 
         return False
@@ -90,7 +91,7 @@ class Blockchain(object):
             'timestamp': str(datetime.datetime.now()),
             'transactions': self.current_transactions,
             'proof': proof,
-            'previous_hash': previous_hash or self.hash(self.chain[-1])
+            'previous_hash': previous_hash or HashCash.hash(self.chain[-1])
         }
 
         self.chain.append(block)
@@ -98,7 +99,7 @@ class Blockchain(object):
             index=len(self.chain),
             transactions=self.current_transactions,
             proof=proof,
-            previous_hash=str(previous_hash or self.hash(self.chain[-1]))
+            previous_hash=str(previous_hash or HashCash.hash(self.chain[-1]))
         ).save()
 
         self.current_transactions = []
@@ -134,41 +135,10 @@ class Blockchain(object):
         else:
             return False, self.last_block['index'] + 1
 
-    @staticmethod
-    def hash(block):
-        print(block)
-        block_string = json.dumps(block, sort_keys=True)
-        print(type(block_string))
-        return hashlib.sha256(str(block_string).encode()).hexdigest()
-
     @property
     def last_block(self):
 
         return self.chain[-1]
-
-    def proof_of_work(self, last_proof):
-        """
-        :param last_proof: last proof
-        :return: matched proof
-        """
-
-        proof = 0
-
-        while self.valid_proof(last_proof, proof) is False:
-            proof += 1
-
-        return proof
-
-    @staticmethod
-    def valid_proof(last_proof, proof):
-        """
-        :param last_proof:
-        :param proof:
-        :return:
-        """
-
-        guess = str(last_proof * proof).encode()
-        return hashlib.sha256(guess).hexdigest()[:4] == '0000'  # set difficulty
 
     def valid_chain(self, chain):
 
@@ -178,10 +148,10 @@ class Blockchain(object):
 
             print('last block : {0}\nblock : {1}\n--------------------\n'.format(last_block, block))
 
-            if block['previous_hash'] != self.hash(last_block):
+            if block['previous_hash'] != HashCash.hash(last_block):
                 return False
 
-            if not self.valid_proof(last_block['proof'], block['proof']):
+            if not HashCash.valid_proof(last_block['proof'], block['proof']):
                 return False
 
             last_block = block
