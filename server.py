@@ -64,6 +64,17 @@ def apply_acount():
     return response
 
 
+@app.route('/transactions', methods=['GET'])
+def transactions():
+
+    response = {
+        'current transactions': blockchain.current_transactions,
+        'length': len(blockchain.current_transactions)
+    }
+
+    return jsonify(response), 200
+
+
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
     values = request.get_json()
