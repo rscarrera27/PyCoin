@@ -1,7 +1,7 @@
 from mongoengine import *
 import datetime
 
-connect('BlockChain')
+connect('PyCoin')
 
 
 class Accounts(Document):
