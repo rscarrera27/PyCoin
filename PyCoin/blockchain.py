@@ -1,16 +1,14 @@
 import requests
-import PyCoin.account
 from models import *
 from PyCoin.hash_cash import *
 from urllib.parse import urlparse
 
-Account = PyCoin.account.Account()
-
 
 class Blockchain(object):
 
-    def __init__(self):
+    def __init__(self, account):
         self.current_transactions = []
+        self.Account = account
 
         if len(Block.objects) == 0:
             print("Chain initialized on {0}".format(datetime.datetime.now()))
@@ -65,12 +63,15 @@ class Blockchain(object):
                 length = response.json()['length']
                 chain = response.json()['chain']
 
-                if length > max_length and self.valid_chain(chain):
+                if length > max_length and Blockchain.valid_chain(chain):
                     max_length = length
                     new_chain = chain
 
         if new_chain:
             self.chain = new_chain
+
+            Block.resolve_consensus(self.chain)
+
             return True
 
         return False
@@ -119,14 +120,14 @@ class Blockchain(object):
             'recipient': recipient,
             'amount': amount
         }
-        if Account.check_id(sender, recipient) is False:
+        if self.Account.check_id(sender, recipient) is False:
             return False, self.last_block['index'] + 1
         else:
             pass
 
-        if Account.valid_transactions(requested_transactions) is True:
+        if self.Account.valid_transactions(requested_transactions) is True:
             self.current_transactions.append(requested_transactions)
-            Account.update_transactions_info(sender, recipient, requested_transactions)
+            self.Account.update_transactions_info(sender, recipient, requested_transactions)
 
             return True, self.last_block['index'] + 1
 
@@ -138,7 +139,8 @@ class Blockchain(object):
 
         return self.chain[-1]
 
-    def valid_chain(self, chain):
+    @staticmethod
+    def valid_chain(chain):
 
         last_block = chain[0]
         for current_index in chain:
