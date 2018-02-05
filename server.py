@@ -1,15 +1,11 @@
 from flask import Flask, jsonify, request
-from uuid import uuid4
+from PyCoin.blockchain import *
 from PyCoin.account import *
-
-from PyCoin.blockchain import Blockchain
 from PyCoin.hash_cash import *
 
 app = Flask(__name__)
 
-node_identifier = str(uuid4()).replace('-', '')
-
-blockchain = Blockchain()
+blockchain = Blockchain(Account())
 
 
 @app.route('/mine', methods=['GET'])
@@ -40,6 +36,7 @@ def mine():
         'proof': block['proof'],
         'previous_hash': block['previous_hash']
     }
+
     return jsonify(response), 200
 
 
@@ -54,7 +51,7 @@ def full_chain():
 
 
 @app.route('/id/apply', methods=['POST'])
-def apply_acount():
+def apply_account():
 
     values = request.get_json()
 
@@ -136,4 +133,4 @@ def consensus():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3001)
+    app.run(host='0.0.0.0', port=3000)
