@@ -2,3 +2,5 @@ urllib.parse
 uuid
 mongoengine
 hashlib
+requests
+flask
