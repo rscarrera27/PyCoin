@@ -1,0 +1,1 @@
+DIFFICULTY = 5
