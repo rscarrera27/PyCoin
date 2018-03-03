@@ -1,59 +1,63 @@
 from models.Account import *
+from PyCoin.exceptions import *
 
 
-class Account:
+def valid_transactions(transaction):
 
-    def __init__(self):
-        check = self.apply_acount("0")
-        if check is True:
-            print("Genesis account spawned")
-            Accounts.objects(account_id="0").update_one(set__amount=210000000)
-        else:
-            pass
+    sender = transaction.sender
+    recipient = transaction.recipient
+    requested_amount = transaction.amount
 
-    @staticmethod
-    def valid_transactions(transations):
+    try:
+        queried_amount = Accounts.objects(account_id=sender)[0].amount
 
-        sender = transations['sender']
-        recipient = transations['recipient']
-        requested_amount = transations['amount']
-        queried_amount = Accounts.objects(account_id=sender)[0]
-        queried_amount = queried_amount.amount
+    except:
+        raise DBAccessError('an error raised while trying to creating the transaction ')
 
-        balance = queried_amount - requested_amount
+    balance = queried_amount - requested_amount
 
-        if balance < 0:
-            return False
-        else:
+    if balance < 0:
+        raise ValueError("requested amount {0} coin is not valid: \
+        Your account balance is insufficient.".format(requested_amount))
+
+    else:
+        try:
             Accounts.objects(account_id=sender).update_one(set__amount=balance)
             Accounts.objects(account_id=recipient).update_one(inc__amount=requested_amount)
-            return True
 
-    @staticmethod
-    def check_id(sender_id, recipient_id):
+        except:
+            raise DBAccessError('an error raised while trying to creating the transaction ')
 
-        check_sender_id = not (len(Accounts.objects(account_id=sender_id)) is 0)
-        check_recipient_id = not (len(Accounts.objects(account_id=recipient_id)) is 0)
+        return True
 
-        if not (check_recipient_id and check_sender_id):
-            return False
-        else:
-            return True
 
-    @staticmethod
-    def update_transactions_info(sender_id, recipient_id, transaction):
+def update_transaction_info(transaction):
 
-        Accounts.objects(account_id=sender_id).update_one(push__transactions=transaction)
-        Accounts.objects(account_id=recipient_id).update_one(push__transactions=transaction)
+    sender = transaction.sender
+    recipient = transaction.recipient
 
-    @staticmethod
-    def apply_acount(id):
+    try:
+        Accounts.objects(account_id=sender).update_one(push__transactions=transaction)
+        Accounts.objects(account_id=recipient).update_one(push__transactions=transaction)
 
-        if len(Accounts.objects(account_id=id)) is 0:
+    except:
+        raise DBAccessError('an error raised while trying to creating the transaction ')
+
+    return True
+
+
+def apply_account(apply):
+
+    if len(Accounts.objects(account_id=apply)) is 0:
+        try:
             Accounts(
-                account_id=id
+                account_id=apply
             ).save()
-            return True
 
-        else:
-            return False
+        except:
+            raise DBAccessError('an error raised while trying to creating the transaction ')
+
+        return True
+
+    else:
+        raise ValueError('Already Exists')
