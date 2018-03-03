@@ -1,7 +1,6 @@
 import requests
 from models.Nodes import *
 from models.Block import *
-from PyCoin.exceptions import *
 from PyCoin.blockchain import Blockchain
 from urllib.parse import urlparse
 
@@ -21,7 +20,6 @@ def resolve_conflict():
     max_length = Block.objects.count()
 
     for node in Node.objects:
-
 
         response = requests.get('https://{0}/chain'.format(node.node_url))
 
