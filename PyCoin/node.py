@@ -9,11 +9,7 @@ from urllib.parse import urlparse
 def register_node(address):
 
     parsed_url = urlparse(address)
-    try:
-        Node(node_url=parsed_url.netloc).save()
-
-    except:
-        raise DBAccessError('an error raised while trying to saving the new node')
+    Node(node_url=parsed_url.netloc).save()
 
     return True
 
@@ -26,10 +22,8 @@ def resolve_conflict():
 
     for node in Node.objects:
 
-        try:
-            response = requests.get('https://{0}/chain'.format(node.node_url))
-        except:
-            raise NodeUnavailableError
+
+        response = requests.get('https://{0}/chain'.format(node.node_url))
 
         if response.status_code == 200:
             response = response.json()
