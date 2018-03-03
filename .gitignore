@@ -107,3 +107,6 @@ ENV/
 .idea/modules.xml
 .idea/misc.xml
 .idea/inspectionProfiles/profiles_settings.xml
+
+#legacy
+PyCoin_regacy
