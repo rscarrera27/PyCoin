@@ -1,6 +1,7 @@
 # PyCoin [![Build Status](https://travis-ci.org/devArtoria/PyCoin.svg?branch=master)](https://travis-ci.org/devArtoria/PyCoin) 
 
 ## Summary
+Now dev in ver 2.0
 Implement blockchain with python.  
 
 ### HTTP Method
