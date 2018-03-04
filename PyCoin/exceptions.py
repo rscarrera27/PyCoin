@@ -13,7 +13,14 @@ class DBAccessError(Error):
     def __init__(self, msg):
         self.msg = msg
 
+
 class NodeUnavailableError(Error):
 
     def __init__(self, msg="Node unavailable"):
+        self.msg = msg
+
+
+class UserNotExistsError(Error):
+
+    def __init__(self, msg="User Not Exists"):
         self.msg = msg
