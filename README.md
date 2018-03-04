@@ -1,6 +1,7 @@
 # PyChain
 
 ## Summary
+now dev in ver 2.0  
 Implement blockchain with python.  
 
 ### HTTP Method
