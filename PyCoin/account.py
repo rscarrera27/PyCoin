@@ -46,3 +46,13 @@ def apply_account(apply):
 
     else:
         raise ValueError('Already Exists')
+
+
+def check_id(account_id):
+
+    check_id = not (len(Accounts.objects(account_id=account_id)) is 0)
+
+    if not (check_recipient_id and check_sender_id):
+        raise
+    else:
+        return True
