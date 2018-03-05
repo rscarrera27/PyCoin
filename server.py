@@ -2,10 +2,13 @@ from flask import Flask, jsonify, request
 from PyCoin.blockchain import *
 from PyCoin.account import *
 from PyCoin.hash_cash import *
+from PyCoin.transactions import *
+from PyCoin.node import *
+from models.Block import *
 
 app = Flask(__name__)
 
-blockchain = Blockchain(Account())
+blockchain = Blockchain()
 
 
 @app.route('/mine', methods=['GET'])
@@ -15,26 +18,22 @@ def mine():
     node_identifier = request.args.get("node_identifier")
 
     if type(node_identifier) != str:
-        if Account.check_id("0", node_identifier) is False:
+        if check_id("0", node_identifier) is False:
             return jsonify({'message': "Wrong argument"}), 403
 
-    proof = HashCash.proof_of_work(last_proof)
+    proof = proof_of_work(last_proof)
 
-    blockchain.new_transactions(
-        sender='0',
-        recipient=node_identifier,
-        amount=1
-    )
+    blockchain.new_transactions(Transaction('0', node_identifier, 1))
 
-    previous_hash = HashCash.hash(last_block)
+    previous_hash = block_hash(last_block)
     block = blockchain.new_block(proof, previous_hash)
 
     response = {
         'message': 'new block forged',
-        'index': block['index'],
-        'transactions': block['transactions'],
-        'proof': block['proof'],
-        'previous_hash': block['previous_hash']
+        'index': block.index,
+        'transactions': block.transactions,
+        'proof': block.proof,
+        'previous_hash': block.previous_hash
     }
 
     return jsonify(response), 200
@@ -44,21 +43,21 @@ def mine():
 def full_chain():
     response = {
         'chain': blockchain.chain,
-        'length': len(blockchain.chain),
+        'length': Block.objects.count(),
     }
 
     return jsonify(response), 200
 
 
 @app.route('/id/apply', methods=['POST'])
-def apply_account():
+def apply_new_account():
 
     values = request.get_json()
 
     account_id = values.get('id')
     print(account_id)
 
-    if Account.apply_acount(account_id):
+    if apply_account(account_id):
         response = jsonify({'message': 'ID was applied'}), 201
     else:
         response = jsonify({'message': 'requested ID is existing'}), 400
@@ -81,8 +80,8 @@ def transactions():
 def new_transaction():
     values = request.get_json()
     print(values)
-
-    check, index = blockchain.new_transactions(values['sender'], values['recipient'], values['amount'])
+    transaction = Transaction(values['sender'], values['recipient'], int(values['amount']))
+    check, index = blockchain.new_transactions(transaction)
 
     if check:
         response = jsonify({'message': 'Transaction will be added to Block {0}'.format(index)}), 201
@@ -104,11 +103,11 @@ def register_nodes():
         return "Error : unvalid list of nodes", 400
 
     for node in nodes:
-        blockchain.register_node(node)
+        register_node(node)
 
     response = {
         'message': 'New Nodes hav been successfully added',
-        'total_nodes': list(blockchain.nodes)
+        'total_nodes': get_all_nodes
     }
 
     return jsonify(response), 201
