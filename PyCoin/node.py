@@ -38,3 +38,8 @@ def resolve_conflict():
         return True
 
     return False
+
+
+@property
+def get_all_nodes():
+    return [node.node_url for node in Node.objects]
