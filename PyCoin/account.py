@@ -50,9 +50,9 @@ def apply_account(apply):
 
 def check_id(account_id):
 
-    check_id = not (len(Accounts.objects(account_id=account_id)) is 0)
+    check = Accounts.objects(account_id=account_id).count()
 
-    if not (check_recipient_id and check_sender_id):
-        raise
-    else:
+    if check:
         return True
+    else:
+        raise UserNotExistsError
